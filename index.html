@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>간편 투자 복리 계산기</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google AdSense 최신 코드 -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8138385462192461"
+     crossorigin="anonymous"></script>
+
+  <!-- 사이트 소유권 확인용 메타 태그 -->
+  <meta name="google-adsense-account" content="ca-pub-8138385462192461" />
+</head>
+<body class="bg-gray-50 flex flex-col items-center min-h-screen p-4">
+
+  <!-- 상단 자동 광고 -->
+  <div class="w-full max-w-4xl mb-6">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-8138385462192461"
+         data-ad-slot="1234567890"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+
+    <!-- 계산기 본체 -->
+    <div class="flex-1 bg-white p-6 rounded-2xl shadow-md">
+      <h1 class="text-2xl font-bold mb-4 text-center">💰 간편 투자 복리 계산기</h1>
+
+      <label class="block mb-2 font-semibold">투자 원금 (원)</label>
+      <input id="principal" type="number" placeholder="예: 10000" class="w-full p-2 border rounded mb-4"/>
+
+      <label class="block mb-2 font-semibold">투자 기간 (일)</label>
+      <input id="days" type="number" placeholder="예: 30" class="w-full p-2 border rounded mb-4"/>
+
+      <label class="block mb-2 font-semibold">일일 목표 수익률 (%)</label>
+      <input id="dailyRate" type="number" placeholder="예: 10" class="w-full p-2 border rounded mb-4"/>
+
+      <button onclick="calculateCompound()" class="bg-blue-500 text-white px-4 py-2 rounded w-full font-semibold hover:bg-blue-600">
+        계산하기
+      </button>
+    </div>
+
+
+  <!-- 결과 영역 -->
+  <div id="result" class="w-full max-w-4xl mt-6"></div>
+
+  <!-- 이용약관 -->
+  <div class="w-full max-w-4xl mt-6 p-4 bg-gray-100 rounded text-sm text-gray-600">
+    <h2 class="font-semibold mb-2">이용약관</h2>
+    <p>이 계산기는 간단한 투자 시뮬레이션용으로 제공됩니다. 실제 투자 손익과 다를 수 있으며, 본 계산기를 이용한 투자 결과에 대해 서비스 제공자는 책임을 지지 않습니다.</p>
+  </div>
+
+  <script>
+    function calculateCompound() {
+      const principal = parseFloat(document.getElementById("principal").value);
+      const days = parseInt(document.getElementById("days").value);
+      const dailyRateInput = parseFloat(document.getElementById("dailyRate").value) / 100;
+
+      if (isNaN(principal) || isNaN(days) || isNaN(dailyRateInput)) {
+        alert("모든 값을 올바르게 입력해주세요.");
+        return;
+      }
+
+      let amount = principal;
+      let tableRows = "";
+      const step = Math.ceil(days / 30); // 최대 30단계
+
+      for (let i = 1; i <= days; i++) {
+        amount *= (1 + dailyRateInput);
+        if (i % step === 0 || i === days) {
+          tableRows += `
+            <tr class="border-b text-center">
+              <td class="py-2">${i}일</td>
+              <td class="py-2">${amount.toLocaleString(undefined, { maximumFractionDigits: 0 })} 원</td>
+            </tr>
+          `;
+        }
+      }
+
+      const totalProfit = amount - principal;
+
+      document.getElementById("result").innerHTML = `
+        <div class="bg-white p-4 rounded-xl shadow-md mb-4">
+          <h2 class="text-lg font-bold mb-2 text-center">결과 요약</h2>
+          <p>최종 금액: <b>${amount.toLocaleString(undefined, { maximumFractionDigits: 0 })} 원</b></p>
+          <p>총 수익: <b>${totalProfit.toLocaleString(undefined, { maximumFractionDigits: 0 })} 원</b></p>
+          <p>총 수익률: <b>${((amount / principal - 1) * 100).toFixed(2)}%</b></p>
+        </div>
+
+        <table class="w-full border rounded-lg bg-white">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="py-2">경과 일</th>
+              <th class="py-2">금액</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      `;
+    }
+  </script>
+</body>
+</html>
